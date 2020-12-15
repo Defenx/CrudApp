@@ -19,8 +19,8 @@ public class HotelServiceImpl implements HotelService {
 
 
     @Override
-    public void createHotel(String name, int idCountry) throws SQLException {
-        hotelRepository.createCountry(name,idCountry);
+    public Hotel createHotel(String name, int idCountry) throws SQLException {
+        return hotelRepository.createHotel(name,idCountry);
     }
 
     @Override
@@ -29,12 +29,12 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public void deleteHotelById(int id) throws SQLException {
-        hotelRepository.deleteHotelById(id);
+    public long deleteHotelById(int id) throws SQLException {
+       return hotelRepository.deleteHotelById(id);
     }
 
     @Override
-    public int updateHotel(int id,int idNewCountry, String name) throws SQLException {
+    public Hotel updateHotel(int id,int idNewCountry, String name) throws SQLException {
         return hotelRepository.updateHotel(id,idNewCountry,name);
     }
 

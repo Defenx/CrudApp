@@ -2,6 +2,7 @@ package lab.andersen.crudapp.repositories;
 
 import lab.andersen.crudapp.entities.Country;
 
+import lab.andersen.crudapp.utils.SqlUtil;
 import org.apache.log4j.Logger;
 
 import java.sql.*;
@@ -26,7 +27,7 @@ public class CountryRepository {
         resultSet = statement.executeQuery("select * from country");
         List<Country> countries = new ArrayList<>();
         while (resultSet.next()) {
-            countries.add(new Country(resultSet.getLong("country_id"),resultSet.getString("name")));
+            countries.add(new Country(resultSet.getLong("country_id"), resultSet.getString("name")));
         }
         resultSet.close();
         statement.close();
@@ -35,7 +36,7 @@ public class CountryRepository {
 
     }
 
-    public void deleteCountryById(int id) throws SQLException {
+    public long deleteCountryById(int id) throws SQLException {
         log.info("method deleteCountryById started");
         PreparedStatement statement;
         statement = connection.prepareStatement("delete from country where country_id = ?");
@@ -43,28 +44,34 @@ public class CountryRepository {
         statement.execute();
         statement.close();
         log.info("country by " + id);
+        return id;
     }
 
-    public void createCountry(String name) throws SQLException {
+    public Country createCountry(String name) throws SQLException {
         log.info("method createCountry started");
         PreparedStatement statement;
+
         statement = connection.prepareStatement("insert into country(name) values (?)");
         statement.setString(1, name);
         statement.execute();
         statement.close();
         log.info("country with name" + name + "was created");
+
+        return new Country(SqlUtil.findIdForCreateOperation(connection, "select MAX(country_id) from country"), name);
+
     }
 
-    public int updateCountry(int id, String name) throws SQLException {
+    public Country updateCountry(int id, String name) throws SQLException {
         log.info("method updateCountry started");
         PreparedStatement statement;
         statement = connection.prepareStatement("update country set name = ? where country_id = ?");
         statement.setString(1, name);
         statement.setInt(2, id);
-        int updated = statement.executeUpdate();
+        statement.execute();
+        Country updatedCountry = new Country(id, name);
         statement.close();
         log.info("country updated");
-        return updated;
+        return updatedCountry;
     }
 
     public Optional<Country> getCountryById(int id) throws SQLException {
@@ -75,7 +82,7 @@ public class CountryRepository {
         ResultSet resultSet = statement.executeQuery();
         Optional<Country> country = Optional.empty();
         if (resultSet.next()) {
-            country = Optional.of(new Country(resultSet.getInt("country_id"),resultSet.getString("name")));
+            country = Optional.of(new Country(resultSet.getInt("country_id"), resultSet.getString("name")));
         }
         resultSet.close();
         statement.close();

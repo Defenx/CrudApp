@@ -17,8 +17,9 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void createCountry(String name) throws SQLException {
-        countryRepository.createCountry(name);
+    public Country createCountry(String name) throws SQLException {
+
+        return countryRepository.createCountry(name);
     }
 
     @Override
@@ -27,12 +28,12 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void deleteCountryById(int id) throws SQLException {
-        countryRepository.deleteCountryById(id);
+    public long deleteCountryById(int id) throws SQLException {
+        return countryRepository.deleteCountryById(id);
     }
 
     @Override
-    public int updateCountry(int id, String name) throws SQLException {
+    public Country updateCountry(int id, String name) throws SQLException {
         return countryRepository.updateCountry(id, name);
     }
 

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CountryService {
-    void createCountry(String name) throws SQLException;
+    Country createCountry(String name) throws SQLException;
     List<Country> getCountries() throws SQLException;
-    void deleteCountryById(int id) throws SQLException;
-    int updateCountry(int id, String name) throws SQLException;
+    long deleteCountryById(int id) throws SQLException;
+    Country updateCountry(int id, String name) throws SQLException;
     Optional<Country> getCountryById(int id) throws SQLException;
 }
