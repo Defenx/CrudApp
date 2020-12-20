@@ -1,7 +1,10 @@
 package lab.andersen.crudapp.repositories;
 
+import lab.andersen.crudapp.entities.Country;
 import lab.andersen.crudapp.entities.Hotel;
 import lab.andersen.crudapp.utils.SqlUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,70 +13,60 @@ import java.util.Optional;
 
 public class HotelRepository {
 
-    private final Connection connection;
+    private final Session session;
 
-    public HotelRepository(Connection connection) {
-        this.connection = connection;
+    public HotelRepository(Session session) {
+        this.session = session;
     }
 
-    public List<Hotel> getHotels() throws SQLException {
-        Statement statement;
-        ResultSet resultSet;
-        statement = connection.createStatement();
-        resultSet = statement.executeQuery("select hotel.id_hotel, hotel.name, country.name from hotel inner join country on hotel.country_id = country.country_id");
-        List<Hotel> hotels = new ArrayList<>();
-        while (resultSet.next()) {
-            hotels.add(new Hotel(resultSet.getInt("id_hotel"), resultSet.getString("name"), resultSet.getString("country.name")));
-        }
-        resultSet.close();
-        statement.close();
+    public List<Hotel> getHotels() {
+        session.beginTransaction();
+        List<Hotel> hotels;
+        Query query = session.createQuery("FROM Hotel");
+        hotels = (List<Hotel>) query.list();
+        session.getTransaction().commit();
         return hotels;
     }
 
-    public Hotel createHotel(String name, int idCountry) throws SQLException {
-        PreparedStatement statement;
-        statement = connection.prepareStatement("insert into hotel(name, country_id) values (?,?)");
-        statement.setString(1, name);
-        statement.setInt(2, idCountry);
-        statement.execute();
-        statement.close();
-        return new Hotel(SqlUtil.findIdForCreateOperation(connection, "select MAX(id_hotel) from hotel"), name, SqlUtil.findNameByIdCountry(connection, "select country.name from country where country.country_id = ?", idCountry));
+    public Hotel createHotel(String name, long idCountry) {
+
+        session.beginTransaction();
+        Hotel createdHotel = new Hotel();
+        createdHotel.setName(name);
+        Country country = session.load(Country.class, idCountry);
+        createdHotel.setCountry(country);
+        session.save(createdHotel);
+        session.getTransaction().commit();
+        return new Hotel(SqlUtil.findIdForCreateOperation(session, "SELECT MAX(idHotel) FROM Hotel"), name, country);
     }
 
-    public long deleteHotelById(int id) throws SQLException {
-        PreparedStatement statement;
-        statement = connection.prepareStatement("delete from hotel where id_hotel = ?");
-        statement.setInt(1, id);
-        statement.execute();
-        statement.close();
+    public long deleteHotelById(long id) {
+
+        session.beginTransaction();
+        Query query = session.createQuery("DELETE FROM Hotel WHERE idHotel = :idForDelete");
+        query.setLong("idForDelete", id);
+        query.executeUpdate();
+        session.getTransaction().commit();
         return id;
     }
 
-    public Hotel updateHotel(int id, int idNewCountry, String name) throws SQLException {
-        PreparedStatement statement;
-        statement = connection.prepareStatement("update hotel set name = ?,country_id = ? where id_hotel = ?");
-        statement.setString(1, name);
-        statement.setInt(2, idNewCountry);
-        statement.setInt(3, id);
-        statement.execute();
-        statement.close();
+    public Hotel updateHotel(long id, long idNewCountry, String name) {
 
-        return new Hotel(id, name, SqlUtil.findNameByIdCountry(connection, "select name from country where country_id = ?", id));
+        session.beginTransaction();
+        Query query = session.createQuery("UPDATE Hotel SET name = :nameForUpdate WHERE idHotel = :idCountryWhichUpdated");
+        query.setString("nameForUpdate", name);
+        query.setLong("idCountryWhichUpdated", id);
+        Country country = session.load(Country.class, idNewCountry);
+        query.executeUpdate();
+        session.getTransaction().commit();
+        return new Hotel(id, name, country);
     }
 
-    public Optional<Hotel> getHotelById(int id) throws SQLException {
-        PreparedStatement statement;
-        statement = connection.prepareStatement("select hotel.id_hotel, hotel.name, country.name from hotel inner join country on hotel.country_id = country.country_id where id_hotel = ?");
-        statement.setInt(1, id);
-        ResultSet resultSet = statement.executeQuery();
-        Optional<Hotel> hotel = Optional.empty();
-        if (resultSet.next()) {
-            hotel = Optional.of(new Hotel(resultSet.getInt("id_hotel"), resultSet.getString("name"), resultSet.getString("country.name")));
-
-        }
-        resultSet.close();
-        statement.close();
+    public Optional<Hotel> getHotelById(long id) {
+        session.beginTransaction();
+        Optional<Hotel> hotel;
+        hotel = Optional.of((session.load(Hotel.class, id)));
         return hotel;
     }
-
 }
+

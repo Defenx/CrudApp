@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-//@AllArgsConstructor
 public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
@@ -17,29 +16,28 @@ public class HotelServiceImpl implements HotelService {
         this.hotelRepository = hotelRepository;
     }
 
-
     @Override
-    public Hotel createHotel(String name, int idCountry) throws SQLException {
-        return hotelRepository.createHotel(name,idCountry);
-    }
-
-    @Override
-    public List<Hotel> getHotels() throws SQLException {
+    public List<Hotel> getHotels() {
         return hotelRepository.getHotels();
     }
 
     @Override
-    public long deleteHotelById(int id) throws SQLException {
-       return hotelRepository.deleteHotelById(id);
+    public Hotel createHotel(String name, long idCountry) {
+        return hotelRepository.createHotel(name, idCountry);
     }
 
     @Override
-    public Hotel updateHotel(int id,int idNewCountry, String name) throws SQLException {
-        return hotelRepository.updateHotel(id,idNewCountry,name);
+    public long deleteHotelById(long id) {
+        return hotelRepository.deleteHotelById(id);
     }
 
     @Override
-    public Optional<Hotel> getHotelById(int id) throws SQLException {
+    public Hotel updateHotel(long id, long idNewCountry, String name) {
+        return hotelRepository.updateHotel(id, idNewCountry, name);
+    }
+
+    @Override
+    public Optional<Hotel> getHotelById(long id) {
         return hotelRepository.getHotelById(id);
     }
 }

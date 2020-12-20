@@ -1,27 +1,24 @@
 package lab.andersen.crudapp;
 
-import lab.andersen.crudapp.exceptions.IdNotFoundException;
 import lab.andersen.crudapp.repositories.CountryRepository;
 import lab.andersen.crudapp.repositories.HotelRepository;
 import lab.andersen.crudapp.services.country.CountryService;
 import lab.andersen.crudapp.services.country.impl.CountryServiceImpl;
 import lab.andersen.crudapp.services.hotel.HotelService;
 import lab.andersen.crudapp.services.hotel.impl.HotelServiceImpl;
-import lab.andersen.crudapp.utils.DatabasePoolConnection;
+import lab.andersen.crudapp.utils.HibernateUtil;
 import lab.andersen.crudapp.utils.MenuUtil;
+import org.hibernate.Session;
 
-import java.sql.Connection;
 import java.util.Scanner;
-import java.util.function.Supplier;
 
 public class Runner {
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args)  {
 
-        DatabasePoolConnection databasePoolConnection = new DatabasePoolConnection();
-        Connection connection = databasePoolConnection.getConnection();
-        CountryRepository repository = new CountryRepository(connection);
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        CountryRepository repository = new CountryRepository(session);
         CountryService countryService = new CountryServiceImpl(repository);
-        HotelRepository hotelRepository = new HotelRepository(connection);
+        HotelRepository hotelRepository = new HotelRepository(session);
         HotelService hotelService = new HotelServiceImpl(hotelRepository);
         boolean isRunning = true;
         Scanner scanner = new Scanner(System.in);
@@ -44,7 +41,7 @@ public class Runner {
                         case 3:
                             System.out.println("input id:");
                             int id = scanner.nextInt();
-                            System.out.println(countryService.getCountryById(id).orElseThrow((Supplier<Throwable>) () -> new IdNotFoundException("id " + id + " not found")));
+                            System.out.println(countryService.getCountryById(id));
                             break;
                         case 4:
                             System.out.println("input id");
@@ -77,7 +74,7 @@ public class Runner {
                         case 3:
                             System.out.println("input id:");
                             int id = scanner.nextInt();
-                            System.out.println(hotelService.getHotelById(id).orElseThrow((Supplier<Throwable>) () -> new IdNotFoundException("id " + id +" not found")));
+                            System.out.println(hotelService.getHotelById(id));
                             break;
                         case 4:
                             System.out.println("input id");
@@ -99,7 +96,8 @@ public class Runner {
                     isRunning = false;
             }
         }
-        connection.close();
+        scanner.close();
+        session.close();
     }
 }
 
