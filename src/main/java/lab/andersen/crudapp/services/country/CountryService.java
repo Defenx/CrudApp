@@ -1,15 +1,14 @@
 package lab.andersen.crudapp.services.country;
 
-import lab.andersen.crudapp.entities.Country;
+import lab.andersen.crudapp.dto.CountryDTO;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 public interface CountryService {
-    Country createCountry(String name);
-    List<Country> getCountries();
+    CountryDTO createCountry(String name);
+    List<CountryDTO> getCountries();
     long deleteCountryById(long id);
-    Country updateCountry(long id, String name);
-    Optional<Country> getCountryById(long id);
+    CountryDTO updateCountry(long id, String name);
+    Optional<CountryDTO> getCountryById(long id);
 }
