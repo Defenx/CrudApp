@@ -1,25 +1,25 @@
 package lab.andersen.crudapp;
 
-import lab.andersen.crudapp.repositories.CountryRepository;
-import lab.andersen.crudapp.repositories.HotelRepository;
+import lab.andersen.crudapp.config.SpringConfig;
 import lab.andersen.crudapp.services.country.CountryService;
-import lab.andersen.crudapp.services.country.impl.CountryServiceImpl;
 import lab.andersen.crudapp.services.hotel.HotelService;
-import lab.andersen.crudapp.services.hotel.impl.HotelServiceImpl;
-import lab.andersen.crudapp.utils.HibernateUtil;
 import lab.andersen.crudapp.utils.MenuUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Scanner;
 
 public class Runner {
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        CountryRepository repository = new CountryRepository(session);
-        CountryService countryService = new CountryServiceImpl(repository);
-        HotelRepository hotelRepository = new HotelRepository(session);
-        HotelService hotelService = new HotelServiceImpl(hotelRepository);
+        ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        SessionFactory sessionFactory = context.getBean(SessionFactory.class);
+        sessionFactory.openSession();
+        CountryService countryService = context.getBean(CountryService.class);
+        HotelService hotelService = context.getBean(HotelService.class);
+
         boolean isRunning = true;
         Scanner scanner = new Scanner(System.in);
         while (isRunning) {
@@ -83,7 +83,7 @@ public class Runner {
                             String nameToUpdate = scanner.next();
                             System.out.println("input id new country");
                             int idNewCountry = scanner.nextInt();
-                            hotelService.updateHotel(idToUpdate,idNewCountry, nameToUpdate);
+                            hotelService.updateHotel(idToUpdate, idNewCountry, nameToUpdate);
                             break;
                         case 5:
                             System.out.println("input id for delete");
@@ -96,8 +96,8 @@ public class Runner {
                     isRunning = false;
             }
         }
+        sessionFactory.close();
         scanner.close();
-        session.close();
     }
 }
 

@@ -4,17 +4,17 @@ import lab.andersen.crudapp.dto.HotelDTO;
 import lab.andersen.crudapp.entities.Hotel;
 import lab.andersen.crudapp.repositories.HotelRepository;
 import lab.andersen.crudapp.services.hotel.HotelService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@AllArgsConstructor
 public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
-
-    public HotelServiceImpl(HotelRepository hotelRepository) {
-        this.hotelRepository = hotelRepository;
-    }
 
     @Override
     public List<HotelDTO> getHotels() {

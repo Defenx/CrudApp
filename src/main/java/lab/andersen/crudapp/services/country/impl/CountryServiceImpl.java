@@ -3,16 +3,16 @@ package lab.andersen.crudapp.services.country.impl;
 import lab.andersen.crudapp.dto.CountryDTO;
 import lab.andersen.crudapp.repositories.CountryRepository;
 import lab.andersen.crudapp.services.country.CountryService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
+@AllArgsConstructor
 public class CountryServiceImpl implements CountryService {
     private final CountryRepository countryRepository;
-
-    public CountryServiceImpl(CountryRepository countryRepository) {
-        this.countryRepository = countryRepository;
-    }
 
     @Override
     public CountryDTO createCountry(String name) {
