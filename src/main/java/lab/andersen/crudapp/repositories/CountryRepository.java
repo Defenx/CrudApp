@@ -7,13 +7,12 @@ import lombok.AllArgsConstructor;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 @AllArgsConstructor
 public class CountryRepository {
     private final SessionFactory sessionFactory;

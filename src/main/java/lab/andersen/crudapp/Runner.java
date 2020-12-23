@@ -1,24 +1,19 @@
 package lab.andersen.crudapp;
 
-import lab.andersen.crudapp.config.SpringConfig;
 import lab.andersen.crudapp.services.country.CountryService;
 import lab.andersen.crudapp.services.hotel.HotelService;
 import lab.andersen.crudapp.utils.MenuUtil;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.Scanner;
 
 public class Runner {
     public static void main(String[] args) {
-
-        ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
-        SessionFactory sessionFactory = context.getBean(SessionFactory.class);
-        sessionFactory.openSession();
-        CountryService countryService = context.getBean(CountryService.class);
-        HotelService hotelService = context.getBean(HotelService.class);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+        SessionFactory sessionFactory = context.getBean("sessionFactory", SessionFactory.class);
+        CountryService countryService = context.getBean("countryService" ,CountryService.class);
+        HotelService hotelService = context.getBean("hotelService" ,HotelService.class);
 
         boolean isRunning = true;
         Scanner scanner = new Scanner(System.in);

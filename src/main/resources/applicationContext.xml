@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource">
+
+        </property>
+        <property name="packagesToScan"
+                  value="lab.andersen.crudapp.entities"/>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/touragency?serverTimezone = UTC" />
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
+    </bean>
+
+    <bean id="countryRepository" class="lab.andersen.crudapp.repositories.CountryRepository">
+
+    </bean>
+    <bean id="hotelRepository" class="lab.andersen.crudapp.repositories.HotelRepository">
+
+    </bean>
+    <bean id="countryService" class="lab.andersen.crudapp.services.country.impl.CountryServiceImpl">
+    </bean>
+    <bean id="hotelService" class="lab.andersen.crudapp.services.hotel.impl.HotelServiceImpl">
+    </bean>
+    <context:component-scan base-package="lab.andersen.crudapp"/>
+</beans>
